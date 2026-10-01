@@ -49,7 +49,11 @@
                 {
                     "name": "services.api.esdc-edsc.canada.ca",
                     "value": "services.api.esdc-edsc.canada.ca"
-                },                
+                }, 
+                {
+                    "name": "SOCcerNET",
+                    "value": "SOCcerNET"
+                },               
                 {
                     "name": "your.api.here",
                     "value": "your.api.here"

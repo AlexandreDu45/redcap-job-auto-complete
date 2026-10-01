@@ -1,6 +1,6 @@
 /**
- * Job Auto Complete - a REDCap External Module
- * Author: Alexandre Aubry from Address auto complete of Ekin Tertemiz
+ * Address Auto Complete - a REDCap External Module
+ * Author: Ekin Tertemiz
 */
 
 var STPH_addressAutoComplete = STPH_addressAutoComplete || {};
@@ -75,7 +75,6 @@ STPH_addressAutoComplete.init = function() {
           modal.find('.modal-title').text(lang.cam_title);
           modal.find('label[for=custom-street]').text(lang.cam_field_street);
           modal.find('label[for=custom-number]').text(lang.cam_field_number);
-          modal.find('label[for=custom-apt]').text(lang.cam_field_apt);
           modal.find('label[for=custom-city]').text(lang.cam_field_city);
           modal.find('label[for=custom-code]').text(lang.cam_field_code);
           modal.find('label[for=custom-country]').text(lang.cam_field_country);
@@ -86,7 +85,6 @@ STPH_addressAutoComplete.init = function() {
             event.preventDefault();
             var street = $('#custom-address-modal-wrapper-'+iid.f+' #custom-street').val();
             var number = $('#custom-address-modal-wrapper-'+iid.f+' #custom-number').val();
-            var apt = $('#custom-address-modal-wrapper-'+iid.f+' #custom-apt').val();
             var code = $('#custom-address-modal-wrapper-'+iid.f+' #custom-code').val();
             var city = $('#custom-address-modal-wrapper-'+iid.f+' #custom-city').val();
             var country = $('#custom-address-modal-wrapper-'+iid.f+' #custom-country').val();
@@ -97,7 +95,7 @@ STPH_addressAutoComplete.init = function() {
             // Save into fields if enabled
             if(conf.options.enable_advanced_save)
             {
-              var as_data = { street: street, number:  number, apt: apt, code: code, city: city, country: country, note: note};
+              var as_data = { street: street, number:  number, code: code, city: city, country: country, note: note};
               STPH_addressAutoComplete.handleAdvancedSave(as_data, iid.a);
             }
                     
@@ -175,30 +173,17 @@ STPH_addressAutoComplete.init = function() {
         //  Set Source from external REST API
         source: function(request, response) {
 
-          //var lang = $('input[name="lang___radio"]:checked').val();
-          var lang = $('input[name="' + iid.a.langue + '___radio"]:checked').val();
-
-          console.log("IS SURVEY =", help.is_survey_page);
-
-          var nocBackend = help.url_request_handler;
-
-          if(help.is_survey_page) {
-            nocBackend = help.url_gateway;
-          }   
-
-
           $.ajax({
             dataType: "json",
-            type: "POST",
-            url: nocBackend + "&action=nocSearch",
-            data: {
-                term: request.term,
-                lang: lang,
-                redcap_csrf_token: help.csrf_token
-            },
+            //  url = endpoint + search term + url params 
+            url: api.url_endpoint + request.term + api.url_params + "&ref=redcap-address-auto-complete",
 
             success: function(data){          
               STPH_addressAutoComplete.log("Results have been fetched.")
+              // Conserver le terme réellement saisi par l'utilisateur
+              data.forEach(function(item) {
+              item.searchTerm = request.term;
+              });
               
               //  Mapping Request to REDCap backend or gateway
               var backend = help.url_request_handler + "&action=mapResults"
@@ -210,7 +195,6 @@ STPH_addressAutoComplete.init = function() {
                 session_id: help.session_id,
                 survey_hash: help.survey_hash,
                 source: api.source_identifier,
-                //results: JSON.stringify(Object.values(data)[STPH_addressAutoComplete.configuration.api.api_attr_index]),
                 results: JSON.stringify(data),
                 redcap_csrf_token: help.csrf_token
               })
@@ -236,9 +220,8 @@ STPH_addressAutoComplete.init = function() {
           var top = list.position().top + list.outerHeight();
 
           //  Get API Source Logo
-          var base64img = '';
           if(api.base64_logo) {
-            base64img = '<image style="margin-right:5px;" src="data:image/svg+xml;base64,' + api.base64_logo + '" alt="api-logo" width="10">';
+            var base64img = '<image style="margin-right:5px;" src="data:image/svg+xml;base64,' + api.base64_logo + '" alt="api-logo" width="10">';
           }
           $('<div style="left:'+left+'px;top:'+top +'px;width:'+width+'px;" class="aac-list-footer">'+ base64img +api.source_identifier+'</div>').insertAfter(list);
 
@@ -283,7 +266,7 @@ STPH_addressAutoComplete.init = function() {
 
               //  If advanced save is enabled save parts as well
               if(STPH_addressAutoComplete.configuration.options.enable_advanced_save) {
-                var as_data = { street: ui_s.street, number:  ui_s.number, apt: ui_s.apt, code: ui_s.code, city: ui_s.city, country: ui_s.country, note: "", keyword: target_aac.val()};
+                var as_data = { street: ui_s.street, number:  ui_s.number, code: ui_s.code, city: ui_s.city, country: "", note: "", keyword: ui.item.parts.keyword};
                 STPH_addressAutoComplete.handleAdvancedSave(as_data, iid.a);
               }
 
@@ -297,7 +280,7 @@ STPH_addressAutoComplete.init = function() {
 
             //  If advanced save is enabled save parts as well
             if(STPH_addressAutoComplete.configuration.options.enable_advanced_save) {
-              var as_data = { street: ui.item.parts.street, number:  ui.item.parts.number, apt: ui.item.parts.apt, code: ui.item.parts.code, city: ui.item.parts.city, country: ui.item.parts.country, note: "", keyword: ui.item.parts.keyword};
+              var as_data = { street: ui.item.parts.street, number:  ui.item.parts.number, code: ui.item.parts.code, city: ui.item.parts.city, country: "", note: "", keyword: ui.item.parts.keyword};
               STPH_addressAutoComplete.handleAdvancedSave(as_data, iid.a);
             }
             
@@ -421,7 +404,7 @@ STPH_addressAutoComplete.resetFields = function(iid) {
   }
 
   if(STPH_addressAutoComplete.configuration.options.enable_advanced_save) {
-    var as_data = { street: "", number:  "", apt: "", code: "", city: "", country: "", note: "", keyword: ""};
+    var as_data = { street: "", number:  "", code: "", city: "", country: "", note: ""};
     STPH_addressAutoComplete.handleAdvancedSave(as_data, iid.a);
   }
 
@@ -436,20 +419,18 @@ STPH_addressAutoComplete.handleAdvancedSave = function(data, advanced_fields) {
   //  Define targets
   var save_street = $('#'+advanced_fields.street+'-tr').find('input');
   var save_number = $('#'+advanced_fields.number+'-tr').find('input');
-  var save_keyword = $('#'+advanced_fields.keyword+'-tr').find('input');
-  var save_apt = $('#'+advanced_fields.apt+'-tr').find('input');
   var save_code = $('#'+advanced_fields.code+'-tr').find('input');
   var save_city = $('#'+advanced_fields.city+'-tr').find('input');
   var save_country = $('#'+advanced_fields.country+'-tr').find('input');
   var save_note = $('#'+advanced_fields.note+'-tr').find('input');
+  var save_keyword = $('#'+advanced_fields.keyword+'-tr').find('input');
 
   save_street.val(data.street);
   save_number.val(data.number);
-  save_keyword.val(data.keyword);
-  save_apt.val(data.apt);
   save_code.val(data.code);
   save_city.val(data.city);
   save_country.val(data.country);
   save_note.val(data.note);
+  save_keyword.val(data.keyword);
 
 }

@@ -342,9 +342,9 @@ class addressAutoComplete extends \ExternalModules\AbstractExternalModule
     private function getBaseUrl(): string
     {
 
-        //$isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
-        //$protocol = $isSecure ? 'https://' : 'http://';
-        $protocol = "https://";
+        $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+        $protocol = $isSecure ? 'https://' : 'http://';
+        //$protocol = "https://";
 
         return $protocol . $this->api_config->url;
     }
@@ -537,7 +537,7 @@ class addressAutoComplete extends \ExternalModules\AbstractExternalModule
         
         //$allowedSources = self::getAllowedSources();    // psalm false negative
         //$allowedSources = array_column((json_decode(file_get_contents("sources/sources.json")))->sources, "identifier");  // identical to getAllowedSources()
-        $allowedSources = ["geo.admin.ch", "getaddress.io", "mrnf.gouv.qc.ca", "services.api.esdc-edsc.canada.ca"];    //hard coded works
+        $allowedSources = ["geo.admin.ch", "getaddress.io", "mrnf.gouv.qc.ca", "services.api.esdc-edsc.canada.ca", "SOCcerNET"];    //hard coded works
 
         if(!in_array($identifier,  $allowedSources, true)) {
            return [];

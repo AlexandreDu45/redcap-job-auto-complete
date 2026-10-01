@@ -43,7 +43,18 @@
             "limit": "",
             "term": "OccupationCategoryText",
             "token": "Ocp-Apim-Subscription-Key"
-        },        
+        },
+        {           
+            "identifier": "SOCcerNET",
+            "description": "SOCcer (Standardized Occupation Coding for Computer-assisted Epidemiological Research) is a publicly available application that was developed to assist epidemiological researchers incorporate occupational and industrial risk into their studies. The application is not intended to replace expert coders, but rather prioritizes job descriptions that would most benefit from expert coders. Low scoring job descriptions are more likely to require expert review than high scoring job description.",
+            "documentation": "https://soccer.nci.nih.gov/",
+            "registration": "NCI­SOCcer­Web­Admin@mail.nih.gov",
+            "url": "localhost:8081",
+            "endpoint": "/soccernet?",
+            "secondary": false,
+            "limit": "",
+            "term": "JobTitle"
+        },     
         {
             "identifier": "your.api.here",
             "description": "If you would like to add your own API please make a Pull Request via Github. More information can be found in the docs."
