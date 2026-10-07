@@ -135,8 +135,14 @@
                     "required": true
                 },
                 {
+                    "key": "field-task",
+                    "name": "<i>Taches du métier</i>",
+                    "type": "field-list",
+                    "required": true
+                }, 
+                {
                     "key": "field-street",
-                    "name": "<i>Groupe métier</i>",
+                    "name": "<i>Score de la recherche</i>",
                     "type": "field-list",
                     "required": true,
                     "branchingLogic": {
@@ -147,7 +153,7 @@
                 },
                 {
                     "key": "field-number",
-                    "name": "<i>Code groupe métier</i>",
+                    "name": "<i>Code métier</i>",
                     "type": "field-list",
                     "required": true,
                     "branchingLogic": {
@@ -166,13 +172,7 @@
                         "op": "=",
                         "value": 1
                     }
-                },
-                {
-                    "key": "field-langue",
-                    "name": "<i>Langue de la recherche</i>",
-                    "type": "field-list",
-                    "required": true
-                },        
+                },       
                 {
                     "key": "target-meta",
                     "type": "field-list",

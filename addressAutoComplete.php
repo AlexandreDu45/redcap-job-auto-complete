@@ -299,7 +299,7 @@ class addressAutoComplete extends \ExternalModules\AbstractExternalModule
                         "street"    => $instruction_raw["field-street"],
                         "number"    => $instruction_raw["field-number"],
                         "keyword"    => $instruction_raw["field-keyword"],
-                        "langue" => $instruction_raw["field-langue"],
+                        "task" => $instruction_raw["field-task"],
                     ),
                     "timestamp_field" => $instruction_raw["timestamp"]
                 );

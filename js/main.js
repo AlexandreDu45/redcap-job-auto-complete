@@ -172,11 +172,18 @@ STPH_addressAutoComplete.init = function() {
 
         //  Set Source from external REST API
         source: function(request, response) {
+          
+          var jobTask = $('#' + iid.a.task + '-tr').find('input, textarea').val() || "";
+          var jobTaskParam = "";
+
+          if (api.source_identifier === "SOCcerNET" && jobTask !== "") {
+              jobTaskParam = "&JobTask=" + encodeURIComponent(jobTask);
+          }
 
           $.ajax({
             dataType: "json",
             //  url = endpoint + search term + url params 
-            url: api.url_endpoint + request.term + api.url_params + "&ref=redcap-address-auto-complete",
+            url: api.url_endpoint + request.term + jobTaskParam + api.url_params + "&ref=redcap-address-auto-complete",
 
             success: function(data){          
               STPH_addressAutoComplete.log("Results have been fetched.")
