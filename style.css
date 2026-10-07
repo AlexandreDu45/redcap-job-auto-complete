@@ -86,3 +86,26 @@ form#form input[type="text"].address-auto-complete-input {
     float: none!important;
     margin-right:10px;
 }
+
+.soccer-search-btn {
+    background-color: #337ab7;
+    color: #fff;
+    border: 1px solid #2e6da4;
+    border-radius: 4px;
+
+    padding: 6px 12px;
+    margin-top: 6px;
+
+    font-size: 14px;
+    line-height: 1.42857143;
+
+    cursor: pointer;
+    float: right;
+}
+
+.soccer-search-btn:hover,
+.soccer-search-btn:focus {
+    background-color: #286090;
+    border-color: #204d74;
+    color: #fff;
+}

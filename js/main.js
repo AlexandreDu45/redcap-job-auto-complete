@@ -148,6 +148,12 @@ STPH_addressAutoComplete.init = function() {
           return;
         }
 
+        // Pour SOCcerNET, conserver le JobTitle saisi
+        // afin que le participant puisse remplir JobTask avant de rechercher.
+        if (api.source_identifier === "SOCcerNET") {
+          return;
+        }
+
         //  Notify user if selection has not been processed and set back to initial value!
         if($(this).val() != target_field.val() && target_field.val() != "") {
           STPH_addressAutoComplete.log("Value has not been changed.")
@@ -164,11 +170,13 @@ STPH_addressAutoComplete.init = function() {
 
       //  Register Autocomplete 
       var api = conf.api;
+      var soccerSearchAllowed = false;
 
       target_aac.autocomplete({
 
         //  Start search after min length
-        minLength: 5,
+        //minLength: 5,
+        minLength: 0,
 
         //  Set Source from external REST API
         source: function(request, response) {
@@ -242,6 +250,10 @@ STPH_addressAutoComplete.init = function() {
         },
 
         search: function(event, ui) { 
+          if (api.source_identifier === "SOCcerNET" && !soccerSearchAllowed)
+          {
+            return false;
+          }
           STPH_addressAutoComplete.log("Search has been initiated..")
           //  Add loading indicator on search
           STPH_addressAutoComplete.setState( "is-loading",iid);
@@ -301,6 +313,36 @@ STPH_addressAutoComplete.init = function() {
 
         }
       });
+      if (api.source_identifier === "SOCcerNET") {
+
+          var searchButtonId = "soccer-search-btn-" + iid.f;
+
+          if ($("#" + searchButtonId).length === 0) {
+
+              var searchButton = $('<button>', {
+                  type: 'button',
+                  id: searchButtonId,
+                  text: 'Rechercher',
+                  class: 'soccer-search-btn no-focus-out'
+              });
+
+              target_aac.after(searchButton);
+
+              searchButton.on("click", function() {
+
+                var term = target_aac.val().trim();
+
+                if (term !== "") {
+
+                    soccerSearchAllowed = true;
+
+                    target_aac.autocomplete("search", term);
+
+                    soccerSearchAllowed = false;
+                }
+            });
+          }
+      }
 
     } else {
       STPH_addressAutoComplete.log("There are no Address auto-complete instructions for this form/survey. \nTerminating.");
