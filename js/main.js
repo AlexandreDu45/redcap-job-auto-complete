@@ -44,7 +44,8 @@ STPH_addressAutoComplete.init = function() {
       t: instruction.timestamp_field
     };
 
-    var target_field = $('#'+iid.f+'-tr').find('input');
+    //var target_field = $('#'+iid.f+'-tr').find('input');
+    var target_field = $('[name="' + iid.f + '"]');
     var target_meta  = $('#'+iid.m+'-tr').find('input');
     var timestamp_field = $('#'+iid.t+'-tr').find('input');
 
@@ -111,7 +112,8 @@ STPH_addressAutoComplete.init = function() {
       }
 
       //  Set Target of Address Auto Complete Input
-      var target_aac = $('#'+iid.f+'-tr').find('input#address-auto-complete-'+iid.f);
+      //var target_aac = $('#'+iid.f+'-tr').find('input#address-auto-complete-'+iid.f);
+      var target_aac = $('#address-auto-complete-' + iid.f);
 
       //  Pre-Populate Auto-Complete if there is allready a value for target field
       if(target_field.val().length> 0) {     
@@ -181,7 +183,8 @@ STPH_addressAutoComplete.init = function() {
         //  Set Source from external REST API
         source: function(request, response) {
           
-          var jobTask = $('#' + iid.a.task + '-tr').find('input, textarea').val() || "";
+          //var jobTask = $('#' + iid.a.task + '-tr').find('input, textarea').val() || "";
+          var jobTask = $('[name="' + iid.a.task + '"]').val() || "";
           var jobTaskParam = "";
 
           if (api.source_identifier === "SOCcerNET" && jobTask !== "") {
