@@ -185,16 +185,22 @@ STPH_addressAutoComplete.init = function() {
           
           //var jobTask = $('#' + iid.a.task + '-tr').find('input, textarea').val() || "";
           var jobTask = $('[name="' + iid.a.task + '"]').val() || "";
-          var jobTaskParam = "";
+          var soccerBackend = help.url_request_handler;
 
-          if (api.source_identifier === "SOCcerNET" && jobTask !== "") {
-              jobTaskParam = "&JobTask=" + encodeURIComponent(jobTask);
+          if (help.is_survey_page) {
+              soccerBackend = help.url_gateway;
           }
 
           $.ajax({
             dataType: "json",
-            //  url = endpoint + search term + url params 
-            url: api.url_endpoint + request.term + jobTaskParam + api.url_params + "&ref=redcap-address-auto-complete",
+            type: "POST",
+            url: soccerBackend + "&action=soccerSearch",
+
+            data: {
+                jobtitle: request.term,
+                jobtask: jobTask,
+                redcap_csrf_token: help.csrf_token
+            },
 
             success: function(data){          
               STPH_addressAutoComplete.log("Results have been fetched.")

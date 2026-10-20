@@ -31,40 +31,27 @@ else if($_REQUEST['action'] == 'getConfigDescription') {
 }
 
 
-else if ($_REQUEST['action'] == 'nocSearch') {
+else if ($_REQUEST['action'] == 'soccerSearch') {
 
-    if (empty($_POST["term"])) {
+    if (empty($_POST["jobtitle"])) {
         header("HTTP/1.1 400 Bad Request");
         die("term missing");
     }
 
-    
-    if (empty($_POST["lang"])) {
-        $lang = 'fr';
-    } else {
-        $lang = $_POST["lang"];
-    }
+    $jobtitle = $_POST["jobtitle"];
+    $jobtask  = $_POST["jobtask"] ?? "";
 
-    if ($lang === 'en-US') {
-        $lang = 'en';
-    }
+    $query = http_build_query([
+        "JobTitle" => $jobtitle,
+        "JobTask"  => $jobtask
+    ]);
 
-    $term = urlencode($_POST["term"]);
-
-
-    $apiKey = $module->getProjectSetting("api-key");
-
-    $url =
-        "https://services.api.esdc-edsc.canada.ca/prd/stream1/lmi/noc/v1/v1.0/jobsearch" .
-        "?LanguageName.LanguageName=" . $lang .
-        "&OccupationCategoryText=" . $term;
+    $url = "http://soccerapi:8080/soccernet?" . $query;
     
 
     $opts = [
         'http' => [
-            'method' => 'GET',
-            'header' =>
-                "Ocp-Apim-Subscription-Key: " . $apiKey . "\r\n"
+            'method' => 'GET'
         ]
     ];
 
@@ -76,44 +63,14 @@ else if ($_REQUEST['action'] == 'nocSearch') {
         $context
     );
 
-    $data = json_decode($response);
-
-    $flattened = [];
-
-    foreach ($data as $occupation) {
-
-        $code = $occupation->occupationCategoryCode->occupationCategoryCode;
-
-        $occupationText = '';
-
-        foreach ($occupation->occupationCategoryText as $text) {
-            if ($text->lang === $lang) {
-                $occupationText = $text->value;
-                break;
-            }
-        }
-
-        foreach ($occupation->occupationCategoryTitleList as $titleList) {
-
-            foreach ($titleList->occupationCategoryTitle as $title) {
-
-                if ($title->occupationCategoryTitleText->lang !== $lang) {
-                    continue;
-                }
-
-                $flattened[] = (object) [
-                    'occupationCategoryCode' => $code,
-                    'occupationCategoryText' => $occupationText,
-                    'occupationTitle' => $title->occupationCategoryTitleText->value,
-                    'searchTerm' => $_POST["term"]
-                ];
-            }
-        }
+    if ($response === false) {
+        header("HTTP/1.1 502 Bad Gateway");
+        die("SOCcer API request failed");
     }
 
     header('Content-Type: application/json');
 
-    echo json_encode($flattened);
+    echo $response;
     exit;
 }
 
